@@ -127,10 +127,14 @@ class run_Nexis:
         
         # Apply volume correction if applicable
         if self.volcorrect:
-            regionfile = os.path.join(self.datadir,'regionvoxels.mat')
-            volmat = scipy.io.loadmat(regionfile)
-            voxels = volmat['voxels']
-            voxels_2hem = np.vstack((voxels,voxels)) / 2
+            if not self.region_volumes:
+                # 2/24/2024: This will by default load mouse brain volumes in voxels. NEED .mat of human brain volumes!
+                regionfile = os.path.join(self.datadir,'regionvoxels.mat')
+                volmat = scipy.io.loadmat(regionfile)
+                voxels = volmat['voxels']
+                voxels_2hem = np.vstack((voxels,voxels)) / 2
+            else:
+                voxels_2hem = self.region_volumes
             inv_voxels_2hem = np.diag(np.squeeze(voxels_2hem) ** (-1))
             L = np.mean(voxels_2hem) * np.dot(inv_voxels_2hem,L)
 
