@@ -4,6 +4,7 @@ import scipy as sp
 import scipy.io
 from scipy.linalg import expm
 import pandas as pd
+import torch
 
 class loading_matfiles:
     def __init__(self,datadir_=''):
@@ -48,7 +49,8 @@ class run_Nexis:
         s should be bounded between 0 and 1.
         """
         # Define parameters
-        parameters = parameters.numpy()
+        if isinstance(parameters, torch.Tensor):
+            parameters = parameters.numpy()
         beta = parameters[0] # global diffusivity rate (range [0,5])
         if self.use_baseline:
             gamma = 1 # don't rescale baseline pathology
@@ -97,7 +99,8 @@ class run_Nexis:
         """
         # Define parameters
         ntypes = np.size(self.U,axis=1)
-        parameters = parameters.numpy()
+        if isinstance(parameters, torch.Tensor):
+            parameters = parameters.numpy()
         alpha = parameters[0] # global connectome-independent growth (range [0,5])
         beta = parameters[1] # global diffusivity rate (range [0,5])
         if self.use_baseline:
